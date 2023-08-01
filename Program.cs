@@ -1,16 +1,21 @@
 ﻿using System;
-using System.Text.RegularExpressions;
 
 class Program
 {
-    static bool ValidateEmail(string email)
+    static bool ValidateMobileNumber(string mobileNumber)
     {
-        // Define the regular expression pattern for a valid email address
-        string pattern = @"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$";
-
-        // Use Regex.IsMatch to check if the email matches the pattern
-        if (Regex.IsMatch(email, pattern))
+        // Check if the mobile number has a space at index 2 and is 13 characters long (including the space).
+        if (mobileNumber.Length == 13 && mobileNumber[2] == ' ')
         {
+            // Remove the country code and space from the mobile number and check if the rest are all digits.
+            string numberPart = mobileNumber.Substring(3);
+            foreach (char digit in numberPart)
+            {
+                if (!char.IsDigit(digit))
+                {
+                    return false;
+                }
+            }
             return true;
         }
         else
@@ -21,16 +26,16 @@ class Program
 
     static void Main()
     {
-        Console.Write("Enter your email address: ");
+        Console.Write("Enter your mobile number: ");
         string userInput = Console.ReadLine();
 
-        if (ValidateEmail(userInput))
+        if (ValidateMobileNumber(userInput))
         {
-            Console.WriteLine("Valid email address");
+            Console.WriteLine("Valid mobile number");
         }
         else
         {
-            Console.WriteLine("Invalid email address. Please enter a valid email address.");
+            Console.WriteLine("Invalid mobile number. Please enter a mobile number in the format '91 9919819801'.");
         }
     }
 }
