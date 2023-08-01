@@ -1,11 +1,15 @@
 ﻿using System;
+using System.Text.RegularExpressions;
 
 class Program
 {
-    static bool ValidateLastName(string lastName)
+    static bool ValidateEmail(string email)
     {
-        // Check if the last name is not empty and has at least 3 characters
-        if (!string.IsNullOrEmpty(lastName) && lastName.Length >= 3 && char.IsUpper(lastName[0]))
+        // Define the regular expression pattern for a valid email address
+        string pattern = @"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$";
+
+        // Use Regex.IsMatch to check if the email matches the pattern
+        if (Regex.IsMatch(email, pattern))
         {
             return true;
         }
@@ -17,17 +21,16 @@ class Program
 
     static void Main()
     {
-        Console.Write("Enter your Last Name: ");
+        Console.Write("Enter your email address: ");
         string userInput = Console.ReadLine();
 
-        if (ValidateLastName(userInput))
+        if (ValidateEmail(userInput))
         {
-            Console.WriteLine("Valid Last Name");
+            Console.WriteLine("Valid email address");
         }
         else
         {
-            Console.WriteLine("Invalid Last Name. The Last Name should start with a capital letter and have at least 3 characters.");
+            Console.WriteLine("Invalid email address. Please enter a valid email address.");
         }
     }
 }
-
