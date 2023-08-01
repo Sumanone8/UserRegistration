@@ -2,20 +2,11 @@
 
 class Program
 {
-    static bool ValidateMobileNumber(string mobileNumber)
+    static bool ValidatePassword(string password)
     {
-        // Check if the mobile number has a space at index 2 and is 13 characters long (including the space).
-        if (mobileNumber.Length == 13 && mobileNumber[2] == ' ')
+        // Check if the password has a minimum of 8 characters.
+        if (password.Length >= 8)
         {
-            // Remove the country code and space from the mobile number and check if the rest are all digits.
-            string numberPart = mobileNumber.Substring(3);
-            foreach (char digit in numberPart)
-            {
-                if (!char.IsDigit(digit))
-                {
-                    return false;
-                }
-            }
             return true;
         }
         else
@@ -26,16 +17,16 @@ class Program
 
     static void Main()
     {
-        Console.Write("Enter your mobile number: ");
+        Console.Write("Enter your password: ");
         string userInput = Console.ReadLine();
 
-        if (ValidateMobileNumber(userInput))
+        if (ValidatePassword(userInput))
         {
-            Console.WriteLine("Valid mobile number");
+            Console.WriteLine("Valid password");
         }
         else
         {
-            Console.WriteLine("Invalid mobile number. Please enter a mobile number in the format '91 9919819801'.");
+            Console.WriteLine("Invalid password. The password must have a minimum of 8 characters.");
         }
     }
 }
