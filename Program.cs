@@ -7,7 +7,17 @@ class Program
         // Check if the password has a minimum of 8 characters.
         if (password.Length >= 8)
         {
-            return true;
+            // Check if the password contains at least one uppercase letter.
+            foreach (char character in password)
+            {
+                if (char.IsUpper(character))
+                {
+                    return true;
+                }
+            }
+
+            // If no uppercase letter is found, return false.
+            return false;
         }
         else
         {
@@ -26,7 +36,7 @@ class Program
         }
         else
         {
-            Console.WriteLine("Invalid password. The password must have a minimum of 8 characters.");
+            Console.WriteLine("Invalid password. The password must have a minimum of 8 characters and at least one uppercase letter.");
         }
     }
 }
