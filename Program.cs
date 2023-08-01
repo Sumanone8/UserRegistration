@@ -29,8 +29,18 @@ class Program
                 }
             }
 
-            // Return true only if both uppercase and numeric conditions are met.
-            return hasUppercase && hasNumeric;
+            // Check if the password contains exactly one special character.
+            int specialCharCount = 0;
+            foreach (char character in password)
+            {
+                if (!char.IsLetterOrDigit(character))
+                {
+                    specialCharCount++;
+                }
+            }
+
+            // Return true only if all conditions are met.
+            return hasUppercase && hasNumeric && specialCharCount == 1;
         }
         else
         {
@@ -49,7 +59,7 @@ class Program
         }
         else
         {
-            Console.WriteLine("Invalid password. The password must have a minimum of 8 characters, at least one uppercase letter, and at least one numeric digit.");
+            Console.WriteLine("Invalid password. The password must have a minimum of 8 characters, at least one uppercase letter, exactly one numeric digit, and exactly one special character.");
         }
     }
 }
