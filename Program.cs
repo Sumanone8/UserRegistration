@@ -2,10 +2,10 @@
 
 class Program
 {
-    static bool ValidateFirstName(string firstName)
+    static bool ValidateLastName(string lastName)
     {
-        // Check if the first name is not empty and has at least 3 characters
-        if (!string.IsNullOrEmpty(firstName) && firstName.Length >= 3 && char.IsUpper(firstName[0]))
+        // Check if the last name is not empty and has at least 3 characters
+        if (!string.IsNullOrEmpty(lastName) && lastName.Length >= 3 && char.IsUpper(lastName[0]))
         {
             return true;
         }
@@ -17,16 +17,17 @@ class Program
 
     static void Main()
     {
-        Console.Write("Enter your First Name: ");
+        Console.Write("Enter your Last Name: ");
         string userInput = Console.ReadLine();
 
-        if (ValidateFirstName(userInput))
+        if (ValidateLastName(userInput))
         {
-            Console.WriteLine("Valid First Name");
+            Console.WriteLine("Valid Last Name");
         }
         else
         {
-            Console.WriteLine("Invalid First Name. The First Name should start with a capital letter and have at least 3 characters.");
+            Console.WriteLine("Invalid Last Name. The Last Name should start with a capital letter and have at least 3 characters.");
         }
     }
 }
+
