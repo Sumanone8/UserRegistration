@@ -1,46 +1,17 @@
 ﻿using System;
+using System.Text.RegularExpressions;
 
 class Program
 {
-    static bool ValidatePassword(string password)
+    static bool ValidateEmail(string email)
     {
-        // Check if the password has a minimum of 8 characters.
-        if (password.Length >= 8)
+        // Define the regular expression pattern for a valid email address
+        string pattern = @"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$";
+
+        // Use Regex.IsMatch to check if the email matches the pattern
+        if (Regex.IsMatch(email, pattern))
         {
-            // Check if the password contains at least one uppercase letter.
-            bool hasUppercase = false;
-            foreach (char character in password)
-            {
-                if (char.IsUpper(character))
-                {
-                    hasUppercase = true;
-                    break;
-                }
-            }
-
-            // Check if the password contains at least one numeric digit.
-            bool hasNumeric = false;
-            foreach (char character in password)
-            {
-                if (char.IsDigit(character))
-                {
-                    hasNumeric = true;
-                    break;
-                }
-            }
-
-            // Check if the password contains exactly one special character.
-            int specialCharCount = 0;
-            foreach (char character in password)
-            {
-                if (!char.IsLetterOrDigit(character))
-                {
-                    specialCharCount++;
-                }
-            }
-
-            // Return true only if all conditions are met.
-            return hasUppercase && hasNumeric && specialCharCount == 1;
+            return true;
         }
         else
         {
@@ -50,16 +21,50 @@ class Program
 
     static void Main()
     {
-        Console.Write("Enter your password: ");
-        string userInput = Console.ReadLine();
+        string[] validEmails = {
+            "abc@yahoo.com",
+            "abc-100@yahoo.com",
+            "abc.100@yahoo.com",
+            "abc111@abc.com",
+            "abc-100@abc.net",
+            "abc.100@abc.com.au",
+            "abc@1.com",
+            "abc@gmail.com.com",
+            "abc+100@gmail.com"
+        };
 
-        if (ValidatePassword(userInput))
+        string[] invalidEmails = {
+            "abc",
+            "abc@.com.my",
+            "abc123@gmail.a",
+            "abc123@.com",
+            "abc123@.com.com",
+            ".abc@abc.com",
+            "abc()*@gmail.com",
+            "abc@%*.com",
+            "abc..2002@gmail.com",
+            "abc.@gmail.com",
+            "abc@abc@gmail.com",
+            "abc@gmail.com.1a",
+            "abc@gmail.com.aa.au"
+        };
+
+        Console.WriteLine("Valid Emails:");
+        foreach (string email in validEmails)
         {
-            Console.WriteLine("Valid password");
+            if (ValidateEmail(email))
+            {
+                Console.WriteLine($"- {email}");
+            }
         }
-        else
+
+        Console.WriteLine("\nInvalid Emails:");
+        foreach (string email in invalidEmails)
         {
-            Console.WriteLine("Invalid password. The password must have a minimum of 8 characters, at least one uppercase letter, exactly one numeric digit, and exactly one special character.");
+            if (!ValidateEmail(email))
+            {
+                Console.WriteLine($"- {email}");
+            }
         }
     }
 }
