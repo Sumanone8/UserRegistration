@@ -1,70 +1,55 @@
-﻿using System;
+﻿using NUnit.Framework;
 using System.Text.RegularExpressions;
 
-class Program
+[TestFixture]
+public class UserValidationTests
 {
-    static bool ValidateEmail(string email)
+    [TestCase("John", "Doe", "john.doe@example.com", "1234567890", "SecurePassword123")]
+    [TestCase("Jane", "Smith", "jane.smith@example.com", "9876543210", "StrongPassword456")]
+    public void ValidEntries_ShouldReturnTrue(string firstName, string lastName, string email, string mobile, string password)
     {
-        // Define the regular expression pattern for a valid email address
-        string pattern = @"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$";
-
-        // Use Regex.IsMatch to check if the email matches the pattern
-        if (Regex.IsMatch(email, pattern))
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
+        Assert.IsTrue(ValidateUserEntry(firstName, lastName, email, mobile, password));
     }
 
-    static void Main()
+    [TestCase("John", "Doe", "invalid-email", "1234567890", "WeakPassword with c# code")]
+    [TestCase("", "Smith", "jane.smith@example.com", "9876543210", "StrongPassword456")]
+    [TestCase("Jane", "", "jane.smith@example.com", "9876543210", "StrongPassword456")]
+    [TestCase("John", "Doe", "john.doe@example.com", "invalid-mobile", "SecurePassword123")]
+    public void InvalidEntries_ShouldReturnFalse(string firstName, string lastName, string email, string mobile, string password)
     {
-        string[] validEmails = {
-            "abc@yahoo.com",
-            "abc-100@yahoo.com",
-            "abc.100@yahoo.com",
-            "abc111@abc.com",
-            "abc-100@abc.net",
-            "abc.100@abc.com.au",
-            "abc@1.com",
-            "abc@gmail.com.com",
-            "abc+100@gmail.com"
-        };
+        Assert.IsFalse(ValidateUserEntry(firstName, lastName, email, mobile, password));
+    }
 
-        string[] invalidEmails = {
-            "abc",
-            "abc@.com.my",
-            "abc123@gmail.a",
-            "abc123@.com",
-            "abc123@.com.com",
-            ".abc@abc.com",
-            "abc()*@gmail.com",
-            "abc@%*.com",
-            "abc..2002@gmail.com",
-            "abc.@gmail.com",
-            "abc@abc@gmail.com",
-            "abc@gmail.com.1a",
-            "abc@gmail.com.aa.au"
-        };
+    static bool ValidateUserEntry(string firstName, string lastName, string email, string mobile, string password)
+    {
+        return ValidateName(firstName) &&
+               ValidateName(lastName) &&
+               ValidateEmail(email) &&
+               ValidateMobile(mobile) &&
+               ValidatePassword(password);
+    }
 
-        Console.WriteLine("Valid Emails:");
-        foreach (string email in validEmails)
-        {
-            if (ValidateEmail(email))
-            {
-                Console.WriteLine($"- {email}");
-            }
-        }
+    static bool ValidateName(string name)
+    {
+        // Validate name logic here
+        return !string.IsNullOrEmpty(name);
+    }
 
-        Console.WriteLine("\nInvalid Emails:");
-        foreach (string email in invalidEmails)
-        {
-            if (!ValidateEmail(email))
-            {
-                Console.WriteLine($"- {email}");
-            }
-        }
+    static bool ValidateEmail(string email)
+    {
+        string pattern = @"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$";
+        return Regex.IsMatch(email, pattern);
+    }
+
+    static bool ValidateMobile(string mobile)
+    {
+        // Validate mobile logic here
+        return !string.IsNullOrEmpty(mobile) && mobile.Length == 10 && long.TryParse(mobile, out _);
+    }
+
+    static bool ValidatePassword(string password)
+    {
+        // Validate password logic here
+        return !string.IsNullOrEmpty(password) && !password.Contains("c# code");
     }
 }
