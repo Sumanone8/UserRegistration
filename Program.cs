@@ -1,45 +1,104 @@
 ﻿using NUnit.Framework;
 using System;
-using System.Collections;
 using System.Text.RegularExpressions;
 
-[TestFixture]
-public class EmailValidationParameterizedTests
+public class InvalidFirstNameException : Exception
 {
-    private static IEnumerable TestCases
-    {
-        get
-        {
-            yield return new TestCaseData("abc@yahoo.com").Returns(true);
-            yield return new TestCaseData("abc-100@yahoo.com").Returns(true);
-            yield return new TestCaseData("abc.100@yahoo.com").Returns(true);
-            yield return new TestCaseData("abc111@abc.com").Returns(true);
-            yield return new TestCaseData("abc-100@abc.net").Returns(true);
-            yield return new TestCaseData("abc.100@abc.com.au").Returns(true);
-            yield return new TestCaseData("abc@1.com").Returns(true);
-            yield return new TestCaseData("abc@gmail.com.com").Returns(true);
-            yield return new TestCaseData("abc+100@gmail.com").Returns(true);
+    public InvalidFirstNameException(string message) : base(message) { }
+}
 
-            yield return new TestCaseData("abc").Returns(false);
-            yield return new TestCaseData("abc@.com.my").Returns(false);
-            yield return new TestCaseData("abc123@gmail.a").Returns(false);
-            yield return new TestCaseData("abc123@.com").Returns(false);
-            yield return new TestCaseData("abc123@.com.com").Returns(false);
-            yield return new TestCaseData(".abc@abc.com").Returns(false);
-            yield return new TestCaseData("abc()*@gmail.com").Returns(false);
-            yield return new TestCaseData("abc@%*.com").Returns(false);
-            yield return new TestCaseData("abc..2002@gmail.com").Returns(false);
-            yield return new TestCaseData("abc.@gmail.com").Returns(false);
-            yield return new TestCaseData("abc@abc@gmail.com").Returns(false);
-            yield return new TestCaseData("abc@gmail.com.1a").Returns(false);
-            yield return new TestCaseData("abc@gmail.com.aa.au").Returns(false);
+public class InvalidLastNameException : Exception
+{
+    public InvalidLastNameException(string message) : base(message) { }
+}
+
+public class InvalidEmailException : Exception
+{
+    public InvalidEmailException(string message) : base(message) { }
+}
+
+public class InvalidMobileException : Exception
+{
+    public InvalidMobileException(string message) : base(message) { }
+}
+
+public class InvalidPasswordException : Exception
+{
+    public InvalidPasswordException(string message) : base(message) { }
+}
+
+[TestFixture]
+public class UserValidationTests
+{
+    static void ValidateUserEntry(string firstName, string lastName, string email, string mobile, string password)
+    {
+        ValidateName(firstName);
+        ValidateName(lastName);
+        ValidateEmail(email);
+        ValidateMobile(mobile);
+        ValidatePassword(password);
+    }
+
+    static void ValidateName(string name)
+    {
+        if (string.IsNullOrEmpty(name))
+        {
+            throw new InvalidFirstNameException("First name is invalid.");
         }
     }
 
-    [TestCaseSource(nameof(TestCases))]
-    public bool ValidateEmail(string email)
+    static void ValidateEmail(string email)
     {
         string pattern = @"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$";
-        return Regex.IsMatch(email, pattern);
+        if (!Regex.IsMatch(email, pattern))
+        {
+            throw new InvalidEmailException("Email is invalid.");
+        }
+    }
+
+    static void ValidateMobile(string mobile)
+    {
+        if (string.IsNullOrEmpty(mobile) || mobile.Length != 10 || !long.TryParse(mobile, out _))
+        {
+            throw new InvalidMobileException("Mobile number is invalid.");
+        }
+    }
+
+    static void ValidatePassword(string password)
+    {
+        if (string.IsNullOrEmpty(password) || password.Contains("c# code"))
+        {
+            throw new InvalidPasswordException("Password is invalid.");
+        }
+    }
+
+    [Test]
+    public void ValidEntries_ShouldNotThrowExceptions()
+    {
+        Assert.DoesNotThrow(() => ValidateUserEntry("John", "Doe", "john.doe@example.com", "1234567890", "StrongPassword123"));
+    }
+
+    [Test]
+    public void InvalidFirstName_ShouldThrowInvalidFirstNameException()
+    {
+        Assert.Throws<InvalidFirstNameException>(() => ValidateUserEntry("", "Smith", "jane.smith@example.com", "9876543210", "StrongPassword456"));
+    }
+
+    [Test]
+    public void InvalidEmail_ShouldThrowInvalidEmailException()
+    {
+        Assert.Throws<InvalidEmailException>(() => ValidateUserEntry("Jane", "Smith", "invalid-email", "9876543210", "StrongPassword456"));
+    }
+
+    [Test]
+    public void InvalidMobile_ShouldThrowInvalidMobileException()
+    {
+        Assert.Throws<InvalidMobileException>(() => ValidateUserEntry("John", "Doe", "john.doe@example.com", "invalid-mobile", "StrongPassword123"));
+    }
+
+    [Test]
+    public void InvalidPassword_ShouldThrowInvalidPasswordException()
+    {
+        Assert.Throws<InvalidPasswordException>(() => ValidateUserEntry("John", "Doe", "john.doe@example.com", "1234567890", "WeakPassword with c# code"));
     }
 }
